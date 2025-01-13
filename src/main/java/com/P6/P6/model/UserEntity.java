@@ -4,23 +4,25 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-//todo : check if the anotation are the proper ones
+
 @Entity
 @Table(name = "user_table")
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class User {
+public class UserEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Integer id;
 
     @Column(name = "username")
     private String username;
@@ -29,14 +31,19 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    //todo check how to link user conections with user, maybe a list of UserID ?
-    //ou plutot    private List<User> connections;
-    @ManyToMany
-    private List<User> connections = new ArrayList<>();
 
-    public User(String userName, String password, String email) {
+
+    @ManyToMany
+    private List<UserEntity> connections = new ArrayList<>();
+
+    public UserEntity(String userName, String password, String email) {
         this.username = userName;
         this.password = password;
         this.email = email;
+    }
+
+
+    public Collection<? extends GrantedAuthority> getAuthorities(){
+        return List.of();
     }
 }

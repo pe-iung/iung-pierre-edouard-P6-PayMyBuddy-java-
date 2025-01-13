@@ -14,13 +14,13 @@ public class Transaction {
     @Id
     private int id;
 
-    @Column
+    @JoinColumn
     @ManyToOne
-    private User sender;
+    private UserEntity sender;
 
-    @Column
+    @JoinColumn
     @ManyToOne
-    private User receiver;
+    private UserEntity receiver;
 
     @Column
     private String description;

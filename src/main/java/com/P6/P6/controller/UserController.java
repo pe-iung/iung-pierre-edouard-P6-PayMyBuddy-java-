@@ -1,7 +1,7 @@
 package com.P6.P6.controller;
 
 import com.P6.P6.DTO.AddUserRequest;
-import com.P6.P6.model.User;
+import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,11 +17,10 @@ public class UserController {
 
     @PostMapping("/create")
     public String create(@RequestBody AddUserRequest addUserRequest){
-// save a single Customer
-//        todo : check how to add a user without the Id (is it by adding a new constructor?)
+
         userRepository.save(
-                new User(
-                addUserRequest.getUserName(),
+                new UserEntity(
+                addUserRequest.getUsername(),
                 addUserRequest.getPassword(),
                 addUserRequest.getEmail()
                 )
