@@ -1,42 +1,46 @@
 package com.P6.P6.configuration;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.web.SecurityFilterChain;;
+import org.springframework.security.web.SecurityFilterChain;
+
+;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
 
-
     private final CustomUserDetailsService customUserDetailsService;
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/h2-console").permitAll();
+                    auth.requestMatchers("/login").permitAll();
+                    auth.requestMatchers("/signup", "/css/**", "/js/**", "/webjars/**").permitAll();
                     auth.anyRequest().authenticated();
-        })
+                })
 
-                .formLogin( login -> login.loginPage("/login")
-                                     .failureForwardUrl("/login?error=auth")
+                .formLogin(form -> form
+                        .loginPage("/login") // Use the custom login page
+                        .defaultSuccessUrl("/home", true) // Redirect to /home after successful login
+                        .permitAll()
                 )
-                .logout(logout -> logout.logoutUrl("/logout"))
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout") // Redirect to login page with a logout message
+                        .permitAll()
+                )
 
                 .build();
     }
