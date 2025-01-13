@@ -14,14 +14,13 @@ import java.util.List;
 
 @Entity
 @Table(name = "user_table")
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class UserEntity implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "username")
@@ -45,5 +44,14 @@ public class UserEntity implements UserDetails {
 
     public Collection<? extends GrantedAuthority> getAuthorities(){
         return List.of();
+    }
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 }
