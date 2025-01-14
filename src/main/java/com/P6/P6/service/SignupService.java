@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+//todo add interface for injection dependance
 @RequiredArgsConstructor
 @Service
 public class SignupService {

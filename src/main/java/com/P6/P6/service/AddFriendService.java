@@ -3,10 +3,11 @@ package com.P6.P6.service;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.UserEntityRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class AddFriendService {
 

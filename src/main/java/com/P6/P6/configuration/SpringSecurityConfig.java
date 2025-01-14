@@ -11,13 +11,10 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-;
-
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SpringSecurityConfig {
-
     private final CustomUserDetailsService customUserDetailsService;
 
 
