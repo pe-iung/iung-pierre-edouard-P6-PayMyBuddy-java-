@@ -3,6 +3,7 @@ package com.P6.P6.controller;
 import com.P6.P6.DTO.SignupRequest;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.UserEntityRepository;
+import com.P6.P6.service.SignupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 @RequiredArgsConstructor
 public class SignUpController {
 
-    private final UserEntityRepository userEntityRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+
+    private final SignupService signupService;
 
     @GetMapping("/signup")
     public String signupForm(Model model) {
@@ -26,17 +27,8 @@ public class SignUpController {
 
     @PostMapping("/signup")
     public String handleSignup(@ModelAttribute SignupRequest signupRequest, Model model) {
-        // Save user to the database
-        // Encode the password before saving
-        String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
 
-        UserEntity newUser = new UserEntity(
-                signupRequest.getUsername(),
-                encodedPassword,
-                signupRequest.getEmail()
-        );
-
-        userEntityRepository.save(newUser);
+        signupService.signupNewUser(signupRequest);
 
         model.addAttribute("message", "Signup successful!");
         return "redirect:/login";

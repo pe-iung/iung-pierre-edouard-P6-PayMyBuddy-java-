@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="template_layout_navbar">
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
 </head>
 <body>
-welcome home !
+<div layout:fragment="content1">
+    welcome home in content1 !
+</div>
 </body>
 </html>

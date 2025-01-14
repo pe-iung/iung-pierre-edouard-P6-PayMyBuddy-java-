@@ -33,7 +33,12 @@ public class UserEntity implements UserDetails {
 
 
     @ManyToMany
-    private List<UserEntity> connections = new ArrayList<>();
+    @JoinTable(
+            name = "user_friends",
+            joinColumns = @JoinColumn(name = "userEntity_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id")
+    )
+    private List<UserEntity> friends = new ArrayList<>();
 
     public UserEntity(String userName, String password, String email) {
         this.username = userName;
