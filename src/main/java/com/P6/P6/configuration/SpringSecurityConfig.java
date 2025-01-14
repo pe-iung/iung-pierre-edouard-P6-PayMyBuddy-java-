@@ -32,13 +32,13 @@ public class SpringSecurityConfig {
                 })
 
                 .formLogin(form -> form
-                        .loginPage("/login") // Use the custom login page
-                        .defaultSuccessUrl("/home", true) // Redirect to /home after successful login
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout") // Redirect to login page with a logout message
+                        .logoutSuccessUrl("/login?logout")
                         .permitAll()
                 )
 
