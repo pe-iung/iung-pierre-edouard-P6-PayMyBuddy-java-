@@ -1,11 +1,8 @@
 package com.P6.P6.controller;
 
 import com.P6.P6.DTO.SignupRequest;
-import com.P6.P6.model.UserEntity;
-import com.P6.P6.repositories.UserEntityRepository;
 import com.P6.P6.service.SignupService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -14,15 +14,15 @@ public class AddFriendService {
 
     public void addFriendToUserEntity(String userEntityEmail, String friendEmail, Model model) {
         try {
-            // Find the user by email
+
             UserEntity user = userEntityRepository.findByEmail(userEntityEmail)
                     .orElseThrow(() -> new IllegalArgumentException("User not found with Id: " + userEntityEmail));
 
-            // Find the friend by email
+
             UserEntity friend = userEntityRepository.findByEmail(friendEmail)
                     .orElseThrow(() -> new IllegalArgumentException("Friend not found with email: " + friendEmail));
 
-            // Add the friend if not already added
+
             if (!user.getFriends().contains(friend)) {
                 user.getFriends().add(friend);
                 userEntityRepository.save(user);
