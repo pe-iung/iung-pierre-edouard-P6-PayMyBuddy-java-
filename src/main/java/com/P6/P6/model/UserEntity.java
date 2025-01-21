@@ -32,7 +32,7 @@ public class UserEntity implements UserDetails {
 
 
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_friends",
             joinColumns = @JoinColumn(name = "userEntity_id"),

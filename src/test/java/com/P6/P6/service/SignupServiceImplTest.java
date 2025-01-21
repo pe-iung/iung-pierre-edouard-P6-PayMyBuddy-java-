@@ -3,17 +3,17 @@ package com.P6.P6.service;
 import com.P6.P6.DTO.SignupRequest;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.UserEntityRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
-class SignupServiceTest {
+@ExtendWith(MockitoExtension.class)
+class SignupServiceImplTest {
 
     @Mock
     private BCryptPasswordEncoder passwordEncoder;
@@ -22,12 +22,8 @@ class SignupServiceTest {
     private UserEntityRepository userEntityRepository;
 
     @InjectMocks
-    private SignupService signupService;
+    private SignupServiceImpl signupServiceImpl;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     void signupNewUser_ShouldCreateNewUser() {
@@ -40,7 +36,7 @@ class SignupServiceTest {
         when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
 
         // Act
-        signupService.signupNewUser(request);
+        signupServiceImpl.signupNewUser(request);
 
         // Assert
         verify(passwordEncoder).encode("password123");

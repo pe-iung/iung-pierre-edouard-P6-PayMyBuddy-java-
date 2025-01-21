@@ -1,5 +1,7 @@
 package com.P6.P6.controller;
 
+import com.P6.P6.configuration.TestConfig;
+import com.P6.P6.configuration.WithMockCustomUser;
 import com.P6.P6.model.Account;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.AccountRepository;
@@ -9,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(TestConfig.class)
 class AccountControllerTest {
 
     @Autowired
@@ -39,35 +44,78 @@ class AccountControllerTest {
     @BeforeEach
     @Transactional
     void setUp() {
-        // Clean up existing test data
-        accountRepository.deleteAll();
-        userRepository.deleteAll();
+        try {
+            // Clean up existing test data
+            accountRepository.deleteAll();
+            userRepository.deleteAll();
 
-        // Create test user
-        testUser = new UserEntity();
-        testUser.setUsername("testUser");
-        testUser.setEmail("test@example.com");
-        testUser.setPassword("password");
-        testUser = userRepository.save(testUser);
+            // Create test user
+            testUser = new UserEntity();
+            testUser.setUsername("testUser");
+            testUser.setEmail("test@example.com");
+            testUser.setPassword("password");
+            testUser = userRepository.save(testUser);
 
-        // Create friend user
-        friendUser = new UserEntity();
-        friendUser.setUsername("friend");
-        friendUser.setEmail("friend@example.com");
-        friendUser.setPassword("password");
-        friendUser = userRepository.save(friendUser);
+            // Create friend user
+            friendUser = new UserEntity();
+            friendUser.setUsername("friend");
+            friendUser.setEmail("friend@example.com");
+            friendUser.setPassword("password");
+            friendUser = userRepository.save(friendUser);
 
-        // Create test account
-        testAccount = new Account();
-        testAccount.setUser(testUser);
-        testAccount.setBalance(1000.0);
-        testAccount = accountRepository.save(testAccount);
+            // Create test account
+            testAccount = new Account();
+            testAccount.setUser(testUser);
+            testAccount.setBalance(1000.0);
+            testAccount = accountRepository.save(testAccount);
 
-        // Create friend account
-        friendAccount = new Account();
-        friendAccount.setUser(friendUser);
-        friendAccount.setBalance(500.0);
-        friendAccount = accountRepository.save(friendAccount);
+            // Create friend account
+            friendAccount = new Account();
+            friendAccount.setUser(friendUser);
+            friendAccount.setBalance(500.0);
+            friendAccount = accountRepository.save(friendAccount);
+
+            // Flush and clear to ensure everything is saved
+            userRepository.flush();
+            accountRepository.flush();
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to set up test data: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Test
+    @WithMockCustomUser(email = "test@example.com")
+    @Transactional
+    void deposit_Success() throws Exception {
+        mockMvc.perform(post("/account/deposit")
+                        .param("amount", "500.0"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/account"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        // Verify balance was updated
+        Account updatedAccount = accountRepository.findByUser(testUser).orElseThrow();
+        assertEquals(1500.0, updatedAccount.getBalance());
+    }
+
+    @Test
+    @Transactional
+    void transferMoney_Success() throws Exception {
+        mockMvc.perform(post("/account/transfer")
+                        .with(SecurityMockMvcRequestPostProcessors.authentication())
+                        .param("receiverEmail", "friend@example.com")
+                        .param("amount", "500.0")
+                        .param("description", "Test transfer"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/account"))
+                .andExpect(flash().attributeExists("successMessage"));
+
+        // Verify balances were updated
+        Account updatedSenderAccount = accountRepository.findByUser(testUser).orElseThrow();
+        Account updatedReceiverAccount = accountRepository.findByUser(friendUser).orElseThrow();
+        assertEquals(500.0, updatedSenderAccount.getBalance());
+        assertEquals(1000.0, updatedReceiverAccount.getBalance());
     }
 
     @Test
@@ -87,24 +135,6 @@ class AccountControllerTest {
                 .andExpect(redirectedUrlPattern("**/login"));
     }
 
-    @Test
-    @WithMockUser(username = "test@example.com")
-    @Transactional
-    void transferMoney_Success() throws Exception {
-        mockMvc.perform(post("/account/transfer")
-                        .param("receiverEmail", "friend@example.com")
-                        .param("amount", "500.0")
-                        .param("description", "Test transfer"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/account"))
-                .andExpect(flash().attributeExists("successMessage"));
-
-        // Verify balances were updated
-        Account updatedSenderAccount = accountRepository.findByUser(testUser).orElseThrow();
-        Account updatedReceiverAccount = accountRepository.findByUser(friendUser).orElseThrow();
-        assertEquals(500.0, updatedSenderAccount.getBalance());
-        assertEquals(1000.0, updatedReceiverAccount.getBalance());
-    }
 
     @Test
     @WithMockUser(username = "test@example.com")
@@ -142,20 +172,7 @@ class AccountControllerTest {
         assertEquals(1000.0, senderAccount.getBalance());
     }
 
-    @Test
-    @WithMockUser(username = "test@example.com")
-    @Transactional
-    void deposit_Success() throws Exception {
-        mockMvc.perform(post("/account/deposit")
-                        .param("amount", "500.0"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/account"))
-                .andExpect(flash().attributeExists("successMessage"));
 
-        // Verify balance was updated
-        Account updatedAccount = accountRepository.findByUser(testUser).orElseThrow();
-        assertEquals(1500.0, updatedAccount.getBalance());
-    }
 
     @Test
     @WithMockUser(username = "test@example.com")

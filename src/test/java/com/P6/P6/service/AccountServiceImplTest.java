@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AccountServiceTest {
+class AccountServiceImplTest {
 
     @Mock
     private AccountRepository accountRepository;
@@ -31,7 +31,7 @@ class AccountServiceTest {
     private TransactionRepository transactionRepository;
 
     @InjectMocks
-    private AccountService accountService;
+    private AccountServiceImpl accountServiceImpl;
 
     @Captor
     private ArgumentCaptor<Account> accountCaptor;
@@ -77,7 +77,7 @@ class AccountServiceTest {
         when(accountRepository.save(any(Account.class))).thenReturn(testAccount);
 
         // Act
-        Account result = accountService.createAccount(testUser);
+        Account result = accountServiceImpl.createAccount(testUser);
 
         // Assert
         assertNotNull(result);
@@ -93,7 +93,7 @@ class AccountServiceTest {
         when(accountRepository.findByUser(testUser)).thenReturn(Optional.of(testAccount));
 
         // Act
-        double balance = accountService.getBalance(testUser);
+        double balance = accountServiceImpl.getBalance(testUser);
 
         // Assert
         assertEquals(1000.0, balance);
@@ -106,7 +106,7 @@ class AccountServiceTest {
         when(accountRepository.findByUser(testUser)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RuntimeException.class, () -> accountService.getBalance(testUser));
+        assertThrows(RuntimeException.class, () -> accountServiceImpl.getBalance(testUser));
         verify(accountRepository).findByUser(testUser);
     }
 
@@ -119,7 +119,7 @@ class AccountServiceTest {
         when(transactionRepository.save(any(Transaction.class))).thenAnswer(i -> i.getArgument(0));
 
         // Act
-        accountService.transferMoney(testUser, friendUser, 500.0, "Test transfer");
+        accountServiceImpl.transferMoney(testUser, friendUser, 500.0, "Test transfer");
 
         // Assert
 
@@ -137,7 +137,7 @@ class AccountServiceTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class,
-                () -> accountService.transferMoney(testUser, friendUser, 1500.0, "Test transfer"));
+                () -> accountServiceImpl.transferMoney(testUser, friendUser, 1500.0, "Test transfer"));
 
         verify(accountRepository, never()).save(any());
         verify(transactionRepository, never()).save(any());
@@ -150,7 +150,7 @@ class AccountServiceTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class,
-                () -> accountService.transferMoney(testUser, friendUser, 500.0, "Test transfer"));
+                () -> accountServiceImpl.transferMoney(testUser, friendUser, 500.0, "Test transfer"));
 
         verify(accountRepository, never()).save(any());
         verify(transactionRepository, never()).save(any());
@@ -164,7 +164,7 @@ class AccountServiceTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class,
-                () -> accountService.transferMoney(testUser, friendUser, 500.0, "Test transfer"));
+                () -> accountServiceImpl.transferMoney(testUser, friendUser, 500.0, "Test transfer"));
 
         verify(accountRepository, never()).save(any());
         verify(transactionRepository, never()).save(any());
@@ -177,7 +177,7 @@ class AccountServiceTest {
         when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
 
         // Act
-        accountService.deposit(testUser, 500.0);
+        accountServiceImpl.deposit(testUser, 500.0);
 
         // Assert
         verify(accountRepository).save(accountCaptor.capture());
@@ -189,7 +189,7 @@ class AccountServiceTest {
     void deposit_NegativeAmount() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class,
-                () -> accountService.deposit(testUser, -100.0));
+                () -> accountServiceImpl.deposit(testUser, -100.0));
 
         verify(accountRepository, never()).save(any());
     }
@@ -201,7 +201,7 @@ class AccountServiceTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class,
-                () -> accountService.deposit(testUser, 500.0));
+                () -> accountServiceImpl.deposit(testUser, 500.0));
 
         verify(accountRepository, never()).save(any());
     }
@@ -212,9 +212,9 @@ class AccountServiceTest {
     void validateTransferAmount_InvalidAmount() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class,
-                () -> accountService.transferMoney(testUser, friendUser, -100.0, "Test"));
+                () -> accountServiceImpl.transferMoney(testUser, friendUser, -100.0, "Test"));
         assertThrows(IllegalArgumentException.class,
-                () -> accountService.transferMoney(testUser, friendUser, 0.0, "Test"));
+                () -> accountServiceImpl.transferMoney(testUser, friendUser, 0.0, "Test"));
     }
 
 }

@@ -16,7 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AddFriendServiceTest {
+class AddFriendServiceImplImplTest {
 
     @Mock
     private UserEntityRepository userEntityRepository;
@@ -25,7 +25,7 @@ class AddFriendServiceTest {
     private Model model;
 
     @InjectMocks
-    private AddFriendService addFriendService;
+    private AddFriendServiceImpl addFriendServiceImpl;
 
 
     @Test
@@ -42,7 +42,7 @@ class AddFriendServiceTest {
         when(userEntityRepository.findByEmail("friend@example.com")).thenReturn(Optional.of(friend));
 
         // Act
-        addFriendService.addFriendToUserEntity("user@example.com", "friend@example.com", model);
+        addFriendServiceImpl.addFriendToUserEntity("user@example.com", "friend@example.com", model);
 
         // Assert
         verify(userEntityRepository).save(user);
@@ -55,7 +55,7 @@ class AddFriendServiceTest {
         when(userEntityRepository.findByEmail("user@example.com")).thenReturn(Optional.empty());
 
         // Act
-        addFriendService.addFriendToUserEntity("user@example.com", "friend@example.com", model);
+        addFriendServiceImpl.addFriendToUserEntity("user@example.com", "friend@example.com", model);
 
         // Assert
         verify(model).addAttribute(eq("errorMessage"), any(String.class));
@@ -72,7 +72,7 @@ class AddFriendServiceTest {
         when(userEntityRepository.findByEmail("friend@example.com")).thenReturn(Optional.empty());
 
         // Act
-        addFriendService.addFriendToUserEntity("user@example.com", "friend@example.com", model);
+        addFriendServiceImpl.addFriendToUserEntity("user@example.com", "friend@example.com", model);
 
         // Assert
         verify(model).addAttribute(eq("errorMessage"), any(String.class));

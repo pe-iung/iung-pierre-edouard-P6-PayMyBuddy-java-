@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
-// todo : renommer en AddFriendController
 public class AddFriendController {
 
     private final AddFriendService addFriendService;
