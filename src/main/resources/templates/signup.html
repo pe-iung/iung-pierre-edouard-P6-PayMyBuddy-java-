@@ -3,11 +3,12 @@
 <head>
     <title>Sign Up</title>
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow" style="width: 25rem;">
+
             <div th:if="${errorMessage}" class="alert-danger">
                 <span th:text="${errorMessage}" />
             </div>
@@ -16,25 +17,27 @@
                     <li th:each="msg : ${errorMessages}"><span th:text="msg"></span> </li>
                 </ul>
             </div>
-            <h2 class="text-center">Sign Up</h2>
+            <div class="title-container">
+                <div class="app-title">Pay My Buddy</div>
+            </div>
             <form th:action="@{/signup}" method="post" class="mt-4">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="username" required>
                 </div>
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" required>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="email" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="password" required>
                 </div>
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                    <button type="submit" class="btn btn-primary">S'inscrire</button>
                 </div>
             </form>
-        </div>
+
     </div>
 </div>
 </body>
