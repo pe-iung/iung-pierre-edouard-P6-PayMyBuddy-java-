@@ -21,25 +21,28 @@ public class FriendServiceImpl implements FriendService{
     private final UserEntityRepository userRepository;
     private final TransactionRepository transactionRepository;
 
+
     @Override
     @Transactional(readOnly = true)
     public FriendListResponse getFriendList(UserEntity currentUser) {
-        log.info("a friendList is beeing generated for user {}",currentUser.getUsername());
-        List<FriendDTO> friendDTOs = currentUser.getFriends().stream()
-                .map(friend -> {
-                    FriendDTO dto = new FriendDTO();
-                    dto.setId(friend.getId());
-                    dto.setUsername(friend.getUsername());
-                    dto.setEmail(friend.getEmail());
+        log.info("Generating friend list for user: {}", currentUser.getUsername());
 
-                    return dto;
-                })
+        UserEntity userWithFriends = userRepository.findWithFriendsById(currentUser.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<FriendDTO> friendDTOs = userWithFriends.getFriends().stream()
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
 
-        log.info("a friendListResponse is sent to controller{} ", friendDTOs);
-        return new FriendListResponse(
-                friendDTOs,
-                friendDTOs.size()
-        );
+        log.info("Friend list generated with {} friends", friendDTOs.size());
+        return new FriendListResponse(friendDTOs, friendDTOs.size());
+    }
+
+    private FriendDTO convertToDTO(UserEntity friend) {
+        FriendDTO dto = new FriendDTO();
+        dto.setId(friend.getId());
+        dto.setUsername(friend.getUsername());
+        dto.setEmail(friend.getEmail());
+        return dto;
     }
 }

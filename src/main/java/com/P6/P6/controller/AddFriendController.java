@@ -20,16 +20,21 @@ public class AddFriendController {
     public String showAddFriendForm() {
         return "add-friend";
     }
+
     @PostMapping("/add-friend")
     public String addFriend(
-
-            @RequestParam String friendEmail,
+            String friendEmail,
             Model model
     ) {
 
+        try {
         final UserEntity connectedUser = SecurityHelper.getConnectedUser();
+        addFriendService.addFriendToUserEntity(connectedUser.getEmail(),friendEmail);
 
-        addFriendService.addFriendToUserEntity(connectedUser.getEmail(),friendEmail, model);
+        }catch (Exception e){
+            model.addAttribute("errorMessage" , e.getMessage());
+        }
+
         return "add-friend";
     }
 }

@@ -20,7 +20,7 @@ public class Account {
     private UserEntity user;
 
     @Column(nullable = false)
-    private double balance;
+    private Double balance;
 
     public Account(UserEntity user, double initialBalance) {
         this.user = user;

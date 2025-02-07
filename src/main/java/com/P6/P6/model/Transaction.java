@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "transaction_table")
 public class Transaction {
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @JoinColumn
     @ManyToOne
@@ -26,8 +27,10 @@ public class Transaction {
     private String description;
 
     @Column
-    private double amount;
+    private Double amount;
 
 
+    public Transaction(UserEntity sender, UserEntity receiver, double amount, String description) {
 
+    }
 }

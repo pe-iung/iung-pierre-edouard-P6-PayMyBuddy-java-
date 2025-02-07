@@ -7,10 +7,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,28 +34,25 @@ public class SignUpController {
     public String handleSignup(
             @Valid @ModelAttribute("signupRequest") SignupRequest signupRequest,
             BindingResult bindingResult,
+            Errors errors,
+            Model model,
             RedirectAttributes redirectAttributes
     ) {
-        // Add debug logging
+        // todo : Add debug logging
         System.out.println("Validation errors: " + bindingResult.getAllErrors());
+//
+//        bindingResult.hasErrors()
+//        // Check for empty fields manually if needed
+//        if (signupRequest.getUsername() == null || signupRequest.getUsername().trim().isEmpty() ||
+//                signupRequest.getPassword() == null || signupRequest.getPassword().trim().isEmpty() ||
+//                signupRequest.getEmail() == null || signupRequest.getEmail().trim().isEmpty()) {
+//            bindingResult.rejectValue("username", "field.required", "All fields are required");
+//        }
 
-        // Check for empty fields manually if needed
-        if (signupRequest.getUsername() == null || signupRequest.getUsername().trim().isEmpty() ||
-                signupRequest.getPassword() == null || signupRequest.getPassword().trim().isEmpty() ||
-                signupRequest.getEmail() == null || signupRequest.getEmail().trim().isEmpty()) {
-            bindingResult.rejectValue("username", "field.required", "All fields are required");
-        }
+        if (errors.hasErrors()) {
+            List<String> errorMessages = errors.getAllErrors().stream().map(ObjectError::toString).toList();
 
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute(
-                    "org.springframework.validation.BindingResult.signupRequest",
-                    bindingResult
-            );
-            redirectAttributes.addFlashAttribute("signupRequest", signupRequest);
-            redirectAttributes.addFlashAttribute(
-                    "errorMessage",
-                    "Please fill in all required fields correctly"
-            );
+            model.addAttribute("errorMessages" , errorMessages);
             return "redirect:/signup";
         }
 
@@ -63,8 +64,8 @@ public class SignUpController {
             );
             return "redirect:/login";
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            redirectAttributes.addFlashAttribute("signupRequest", signupRequest);
+            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("signupRequest", signupRequest);
             return "redirect:/signup";
         }
     }

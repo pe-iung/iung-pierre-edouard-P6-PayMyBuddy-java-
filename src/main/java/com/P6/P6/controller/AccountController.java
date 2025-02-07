@@ -1,5 +1,6 @@
 package com.P6.P6.controller;
 
+import ch.qos.logback.core.util.StringUtil;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.UserEntityRepository;
 import com.P6.P6.service.AccountService;
@@ -7,6 +8,7 @@ import com.P6.P6.service.SecurityHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -38,38 +40,14 @@ public class AccountController {
             @RequestParam String description,
             RedirectAttributes redirectAttributes
     ) {
-        // Validate description
-        if (description == null || description.trim().isEmpty()) {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Description cannot be empty");
-            return "redirect:/account";
-        }
-
         try {
             UserEntity sender = SecurityHelper.getConnectedUser();
-            UserEntity receiver = userEntityRepository.findByEmail(receiverEmail)
-                    .orElseThrow(() -> new RuntimeException("Receiver not found"));
-
-            // Prevent self-transfer
-            if (sender.getEmail().equals(receiverEmail)) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "Cannot transfer money to yourself");
-                return "redirect:/account";
-            }
-
-            // Validate amount
-            if (amount <= 0) {
-                redirectAttributes.addFlashAttribute("errorMessage",
-                        "Transfer amount must be positive");
-                return "redirect:/account";
-            }
-
-            accountService.transferMoney(sender, receiver, amount, description.trim());
-            redirectAttributes.addFlashAttribute("successMessage",
-                    "Transfer successful!");
+            accountService.transferMoney(sender, receiverEmail, amount, description.trim());
+            redirectAttributes.addFlashAttribute("successMessage", "Transfer successful!");
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
+
         return "redirect:/account";
     }
 
