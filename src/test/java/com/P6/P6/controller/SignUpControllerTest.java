@@ -61,7 +61,7 @@ class SignUpControllerTest {
         assertEquals(testEmail, createdUser.getEmail());
 
         // Verify account was created
-        Account userAccount = accountRepository.findByUser(createdUser)
+        Account userAccount = accountRepository.findByUser_Id(createdUser.getId())
                 .orElseThrow(() -> new AssertionError("Account not found"));
         assertEquals(0.0, userAccount.getBalance());
         assertEquals(createdUser, userAccount.getUser());

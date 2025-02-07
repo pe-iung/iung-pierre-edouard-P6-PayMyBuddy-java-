@@ -42,7 +42,7 @@ class AddFriendServiceImplImplTest {
         when(userEntityRepository.findByEmail("friend@example.com")).thenReturn(Optional.of(friend));
 
         // Act
-        addFriendServiceImpl.addFriendToUserEntity("user@example.com", "friend@example.com", model);
+        addFriendServiceImpl.addFriendToUserEntity("user@example.com", "friend@example.com");
 
         // Assert
         verify(userEntityRepository).save(user);
@@ -55,7 +55,7 @@ class AddFriendServiceImplImplTest {
         when(userEntityRepository.findByEmail("user@example.com")).thenReturn(Optional.empty());
 
         // Act
-        addFriendServiceImpl.addFriendToUserEntity("user@example.com", "friend@example.com", model);
+        addFriendServiceImpl.addFriendToUserEntity("user@example.com", "friend@example.com");
 
         // Assert
         verify(model).addAttribute(eq("errorMessage"), any(String.class));
@@ -72,7 +72,7 @@ class AddFriendServiceImplImplTest {
         when(userEntityRepository.findByEmail("friend@example.com")).thenReturn(Optional.empty());
 
         // Act
-        addFriendServiceImpl.addFriendToUserEntity("user@example.com", "friend@example.com", model);
+        addFriendServiceImpl.addFriendToUserEntity("user@example.com", "friend@example.com");
 
         // Assert
         verify(model).addAttribute(eq("errorMessage"), any(String.class));
