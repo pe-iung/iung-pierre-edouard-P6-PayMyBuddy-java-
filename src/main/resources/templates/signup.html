@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Sign Up</title>
@@ -8,6 +8,14 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
+            <div th:if="${errorMessage}" class="alert-danger">
+                <span th:text="${errorMessage}" />
+            </div>
+            <div th:if="${errorMessages}" class="alert-danger">
+                <ul>
+                    <li th:each="msg : ${errorMessages}"><span th:text="msg"></span> </li>
+                </ul>
+            </div>
             <h2 class="text-center">Sign Up</h2>
             <form th:action="@{/signup}" method="post" class="mt-4">
                 <div class="mb-3">
