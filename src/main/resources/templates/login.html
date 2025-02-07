@@ -17,14 +17,14 @@
                 <input type="text" id="username" name="username" class="form-control" required>
             </div>
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label">Mot de passe</label>
                 <input type="password" id="password" name="password" class="form-control" required>
             </div>
             <div th:if="${param.error}" class="alert alert-danger" role="alert">
-                Invalid username or password
+                Email ou mot de passe invalide
             </div>
             <div th:if="${param.logout}" class="alert alert-success" role="alert">
-                You have been logged out successfully
+                Vous ètes deconnécté avec succès
             </div>
             <button type="submit" class="btn btn-primary w-100 mb-4">Se connecter</button>
         </form>
