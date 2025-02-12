@@ -4,6 +4,7 @@ import com.P6.P6.DTO.SignupRequest;
 import com.P6.P6.service.SignupService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class SignUpController {
@@ -27,6 +29,7 @@ public class SignUpController {
         if (!model.containsAttribute("signupRequest")) {
             model.addAttribute("signupRequest", new SignupRequest());
         }
+        model.addAttribute("currentUri", "/signup");
         return "signup";
     }
 
@@ -38,8 +41,8 @@ public class SignUpController {
             Model model,
             RedirectAttributes redirectAttributes
     ) {
-        // todo : Add debug logging
-        System.out.println("Validation errors: " + bindingResult.getAllErrors());
+
+        log.debug("Validation errors: {}", bindingResult.getAllErrors());
 //
 //        bindingResult.hasErrors()
 //        // Check for empty fields manually if needed
@@ -58,7 +61,7 @@ public class SignUpController {
 
         try {
             signupService.signupNewUser(signupRequest);
-            redirectAttributes.addFlashAttribute(
+            model.addAttribute(
                     "successMessage",
                     "Signup successful! Please login."
             );

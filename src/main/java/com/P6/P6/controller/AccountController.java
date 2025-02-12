@@ -54,22 +54,22 @@ public class AccountController {
     @PostMapping("/deposit")
     public String deposit(
             @RequestParam double amount,
-            RedirectAttributes redirectAttributes
+            Model model
     ) {
         try {
             // Validate amount
             if (amount <= 0) {
-                redirectAttributes.addFlashAttribute("errorMessage",
+                model.addAttribute("errorMessage",
                         "Deposit amount must be positive");
                 return "redirect:/account";
             }
 
             UserEntity user = SecurityHelper.getConnectedUser();
             accountService.deposit(user, amount);
-            redirectAttributes.addFlashAttribute("successMessage",
+            model.addAttribute("successMessage",
                     "Deposit successful!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/account";
     }

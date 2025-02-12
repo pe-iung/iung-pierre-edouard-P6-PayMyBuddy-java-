@@ -17,7 +17,8 @@ public class AddFriendController {
     private final AddFriendService addFriendService;
 
     @GetMapping("/add-friend")
-    public String showAddFriendForm() {
+    public String showAddFriendForm(Model model) {
+        model.addAttribute("currentUri","/add-friend");
         return "add-friend";
     }
 
