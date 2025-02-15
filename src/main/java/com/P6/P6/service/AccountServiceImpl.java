@@ -17,14 +17,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService{
 
+    private final UserService userService;
+
     private final AccountRepository accountRepository;
-    private final UserEntityRepository userEntityRepository;
     private final TransactionRepository transactionRepository;
     private static final double INITIAL_BALANCE = 0.0;
 
     @Override
     @Transactional
     public Account createAccount(UserEntity user) {
+
+
         Account account = new Account(user, INITIAL_BALANCE);
         return accountRepository.save(account);
     }
@@ -48,7 +51,7 @@ public class AccountServiceImpl implements AccountService{
             throw new IllegalArgumentException("Transfer amount must be positive");
         }
 
-        UserEntity receiver = userEntityRepository.findByEmail(receiverEmail)
+        UserEntity receiver = userService.findByEmail(receiverEmail)
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
         if(sender.getId().equals(receiver.getId())){

@@ -18,7 +18,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class AccountController {
 
     private final AccountService accountService;
-    private final UserEntityRepository userEntityRepository;
 
     @GetMapping
     public String getAccountDetails(Model model) {
@@ -56,13 +55,14 @@ public class AccountController {
             @RequestParam double amount,
             Model model
     ) {
+        // Validate amount
+        if (amount <= 0) {
+            model.addAttribute("errorMessage",
+            "Deposit amount must be positive");
+             return "redirect:/account";
+        }
         try {
-            // Validate amount
-            if (amount <= 0) {
-                model.addAttribute("errorMessage",
-                        "Deposit amount must be positive");
-                return "redirect:/account";
-            }
+
 
             UserEntity user = SecurityHelper.getConnectedUser();
             accountService.deposit(user, amount);

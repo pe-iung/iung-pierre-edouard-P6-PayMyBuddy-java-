@@ -1,7 +1,7 @@
 package com.P6.P6.controller;
 
 import com.P6.P6.DTO.SignupRequest;
-import com.P6.P6.service.SignupService;
+import com.P6.P6.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SignUpController {
 
-    private final SignupService signupService;
+    private final UserService signupService;
 
     @GetMapping("/signup")
     public String signupForm(Model model) {

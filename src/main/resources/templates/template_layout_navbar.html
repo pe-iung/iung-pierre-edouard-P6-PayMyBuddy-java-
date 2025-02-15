@@ -23,7 +23,7 @@
             <li class="nav-item">
                 <a class="nav-link"
                    th:href="@{/add-friend}"
-                   th:classappend="${currentUri == '/add-friend' ? 'active' : ''}">
+                   th:classappend="${servletPath.contains('add-friend') ? 'active' : ''}">
                     Ajouter relation
                 </a>
             </li>
@@ -31,13 +31,6 @@
                 <a class="nav-link me-auto" href="/logout">Se déconnecter</a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link"
-                   th:href="@{/signup}"
-                   th:classappend="${currentUri == '/signup' ? 'active bg-primary' : ''}">
-                    Signup
-                </a>
-            </li>
         </ul>
     </div>
 </nav>
