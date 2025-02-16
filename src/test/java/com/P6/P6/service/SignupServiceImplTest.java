@@ -22,7 +22,7 @@ class SignupServiceImplTest {
     private UserEntityRepository userEntityRepository;
 
     @InjectMocks
-    private SignupServiceImpl signupServiceImpl;
+    private UserServiceImpl signupServiceImpl;
 
 
     @Test
