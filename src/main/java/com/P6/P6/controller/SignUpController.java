@@ -29,7 +29,6 @@ public class SignUpController {
         if (!model.containsAttribute("signupRequest")) {
             model.addAttribute("signupRequest", new SignupRequest());
         }
-        model.addAttribute("currentUri", "/signup");
         return "signup";
     }
 
