@@ -25,7 +25,7 @@ class AddFriendServiceImplImplTest {
     private Model model;
 
     @InjectMocks
-    private AddFriendServiceImpl addFriendServiceImpl;
+    private UserService addFriendServiceImpl;
 
 
     @Test

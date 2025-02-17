@@ -4,8 +4,7 @@ import com.P6.P6.model.Account;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.AccountRepository;
 import com.P6.P6.repositories.UserEntityRepository;
-import com.P6.P6.service.AddFriendServiceImpl;
-import org.junit.AfterClass;
+import com.P6.P6.service.UserServiceImpl;
 import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +42,7 @@ class AccountControllerTest {
     @Autowired
     private MockMvc mvc;
     @Autowired
-    private AddFriendServiceImpl addFriendServiceImpl;
+    private UserServiceImpl addFriendServiceImpl;
 
     @Before
     public void setup() {
