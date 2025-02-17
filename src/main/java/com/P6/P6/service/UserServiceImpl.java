@@ -21,13 +21,13 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserEntityRepository userRepository;
-    private final AccountService accountService;
+    //private final AccountService accountService;
 
     private static final double INITIAL_BALANCE = 0.0;
 
     @Override
     @Transactional
-    public UserEntity signupNewUser(SignupRequest signupRequest) {
+    public Integer signupNewUser(SignupRequest signupRequest) {
         // Validate if email already exists
         if (findByEmail(signupRequest.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
@@ -42,9 +42,9 @@ public class UserServiceImpl implements UserService {
         );
         newUser = userRepository.save(newUser);
 
-        accountService.createAccount(newUser);
-
-        return newUser;
+        //accountService.createAccount(newUser);
+        log.info("from user service impl: this user has been saved {} with id {}", newUser, newUser.getId());
+        return newUser.getId();
     }
 
 
@@ -98,5 +98,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserEntity> findByEmail(String email){
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public Optional<UserEntity> findById(Integer userId){
+        return userRepository.findById(userId);
     }
 }

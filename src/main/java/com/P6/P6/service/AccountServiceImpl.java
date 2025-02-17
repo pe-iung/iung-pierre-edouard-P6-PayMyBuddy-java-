@@ -5,14 +5,17 @@ import com.P6.P6.model.Transaction;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.AccountRepository;
 import com.P6.P6.repositories.TransactionRepository;
-import com.P6.P6.repositories.UserEntityRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService{
@@ -23,10 +26,20 @@ public class AccountServiceImpl implements AccountService{
     private final TransactionRepository transactionRepository;
     private static final double INITIAL_BALANCE = 0.0;
 
+    @Value("${transaction.fee.rate}")
+    private Double transactionFeeRate;
+
+    @Value("${transaction.fee.user.email}")
+    private String feeReceiverUserEmail;
+
+    @Value("${transaction.fee.user.id}")
+    private int feeReceiverUserId;
+
     @Override
     @Transactional
     public Account createAccount(UserEntity user) {
 
+        log.info("from account service : this user was received {} with id {}",user,user.getId());
 
         Account account = new Account(user, INITIAL_BALANCE);
         return accountRepository.save(account);
@@ -41,7 +54,7 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     @Transactional
-    public void transferMoney(UserEntity sender, String receiverEmail, double amount, String description) {
+    public void transferMoney(Integer senderId, String receiverEmail, double amount, String description) {
 
         if (!StringUtils.hasText(description)) {
             throw new IllegalArgumentException("Description cannot be empty");
@@ -51,12 +64,21 @@ public class AccountServiceImpl implements AccountService{
             throw new IllegalArgumentException("Transfer amount must be positive");
         }
 
+        UserEntity sender = userService.findById(senderId)
+                .orElseThrow(() -> new RuntimeException("Sender not found"));
+
         UserEntity receiver = userService.findByEmail(receiverEmail)
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
+        Integer receiverId = receiver.getId();
 
-        if(sender.getId().equals(receiver.getId())){
+        UserEntity feeReceiver = userService.findByEmail(feeReceiverUserEmail)
+                .orElseThrow(() -> new RuntimeException("FeeReceiver not found"));
+        Integer feeReceiverId = feeReceiver.getId();
+
+        if(senderId.equals(receiver.getId())){
             throw new IllegalArgumentException("Cannot transfer money to yourself");
         }
+
 
         if(!assertUsersAreFriends(sender, receiver)){
             throw new IllegalArgumentException("The receiver is not a friend");
@@ -73,15 +95,28 @@ public class AccountServiceImpl implements AccountService{
                 .orElseThrow(() -> new RuntimeException("Receiver account not found"));
 
         // Update balances
-        senderAccount.setBalance(senderAccount.getBalance() - amount);
+        senderAccount.setBalance(senderAccount.getBalance() - (1+transactionFeeRate)*amount);
         receiverAccount.setBalance(receiverAccount.getBalance() + amount);
+
+        // fee management, we remove the fee from sender user,
+        // and send it to the receiver defined in admin application properties
+        Account feeReceiverAccount = accountRepository.findByUser_Id(feeReceiverUserId)
+                .orElseThrow(() -> new RuntimeException("Fee Receiver account not found"));
+
+        feeReceiverAccount.setBalance(feeReceiverAccount.getBalance() + transactionFeeRate*amount);
+
 
         // Save the accounts
         accountRepository.saveAll(List.of(senderAccount, receiverAccount));
 
         // Create and save transaction record
-        Transaction transaction = new Transaction(sender, receiver, amount, description);
+        Transaction transaction = new Transaction(senderId, receiverId, amount, description);
         transactionRepository.save(transaction);
+
+        String feeDescription = "last transaction fee is " + transactionFeeRate + "%";
+
+        Transaction feeTransaction  = new Transaction(senderId, feeReceiverId, transactionFeeRate*amount, feeDescription);
+        transactionRepository.save(feeTransaction);
     }
 
     private static boolean assertUsersAreFriends(UserEntity sender, UserEntity receiver) {
@@ -106,5 +141,10 @@ public class AccountServiceImpl implements AccountService{
     private Account getAccount(UserEntity user) {
         return accountRepository.findByUser_Id(user.getId())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
+    }
+
+    @Override
+    public List<Transaction> getAllTransactionForUser(Integer senderId, Integer receiverId) {
+        return transactionRepository.findAllBySenderIdOrReceiverId(senderId,receiverId);
     }
 }

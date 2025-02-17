@@ -16,12 +16,10 @@ public class Transaction {
     private Integer id;
 
     @JoinColumn
-    @ManyToOne
-    private UserEntity sender;
+    private Integer senderId;
 
     @JoinColumn
-    @ManyToOne
-    private UserEntity receiver;
+    private Integer receiverId;
 
     @Column
     private String description;
@@ -30,7 +28,11 @@ public class Transaction {
     private Double amount;
 
 
-    public Transaction(UserEntity sender, UserEntity receiver, double amount, String description) {
+    public Transaction(Integer senderId, Integer receiverId, double amount, String description) {
 
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.amount = amount;
+        this.description = description;
     }
 }

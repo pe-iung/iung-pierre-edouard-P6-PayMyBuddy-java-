@@ -22,7 +22,7 @@ public class FriendController {
             FriendListResponse friendList =
                     userService.getFriendList(SecurityHelper.getConnectedUser());
             model.addAttribute("friendList", friendList);
-            log.info("a friendList hasbeen generated controller side from friendService {}",friendList);
+            log.info("a friendList has been generated controller side from friendService {}",friendList);
             return "friends";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error fetching friend list: " + e.getMessage());

@@ -1,6 +1,7 @@
 package com.P6.P6.controller;
 
 import com.P6.P6.DTO.SignupRequest;
+import com.P6.P6.service.AccountServiceImpl;
 import com.P6.P6.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ import java.util.List;
 public class SignUpController {
 
     private final UserService signupService;
+    private final AccountServiceImpl accountServiceImpl;
 
     @GetMapping("/signup")
     public String signupForm(Model model) {
@@ -59,10 +61,14 @@ public class SignUpController {
         }
 
         try {
-            signupService.signupNewUser(signupRequest);
+            Integer newUserId= signupService.signupNewUser(signupRequest);
             model.addAttribute(
                     "successMessage",
                     "Signup successful! Please login."
+            );
+            log.info("the user signupt request {} has been signUp with id {}",signupRequest, newUserId );
+            signupService.findById(newUserId).ifPresent(
+                    accountServiceImpl::createAccount
             );
             return "redirect:/login";
         } catch (RuntimeException e) {

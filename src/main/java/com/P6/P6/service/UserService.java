@@ -12,7 +12,7 @@ public interface UserService {
 
 
     @Transactional
-    UserEntity signupNewUser(SignupRequest signupRequest);
+    Integer signupNewUser(SignupRequest signupRequest);
 
     @Transactional(readOnly = true)
     FriendListResponse getFriendList(UserEntity currentUser);
@@ -20,4 +20,5 @@ public interface UserService {
     void addFriendToUserEntity(String userEntityEmail, String friendEmail);
 
     Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findById(Integer userId);
 }

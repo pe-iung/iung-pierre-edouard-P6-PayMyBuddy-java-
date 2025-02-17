@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface UserEntityRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByUsername(String username);
     Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findById(Integer userId);
 
     @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.friends WHERE u.id = :id")
     Optional<UserEntity> findWithFriendsById(@Param("id") Integer id);
