@@ -1,10 +1,13 @@
 package com.P6.P6.controller;
 
 import ch.qos.logback.core.util.StringUtil;
+import com.P6.P6.DTO.FriendListResponse;
+import com.P6.P6.model.Transaction;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.UserEntityRepository;
 import com.P6.P6.service.AccountService;
 import com.P6.P6.service.SecurityHelper;
+import com.P6.P6.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,19 +15,27 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/account")
 public class AccountController {
 
     private final AccountService accountService;
+    private final UserService userService;
 
     @GetMapping
     public String getAccountDetails(Model model) {
         try {
             UserEntity user = SecurityHelper.getConnectedUser();
             double balance = accountService.getBalance(user);
+            List<Transaction> transactions = accountService.getAllTransactionForUser(user.getId(), user.getId());
+            FriendListResponse friendList =
+                    userService.getFriendList(SecurityHelper.getConnectedUser());
+            model.addAttribute("friendList", friendList);
             model.addAttribute("balance", balance);
+            model.addAttribute("transactions", transactions);
             return "account";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error fetching account details");
@@ -37,14 +48,14 @@ public class AccountController {
             @RequestParam String receiverEmail,
             @RequestParam double amount,
             @RequestParam String description,
-            RedirectAttributes redirectAttributes
+            Model model
     ) {
         try {
-            UserEntity sender = SecurityHelper.getConnectedUser();
-            accountService.transferMoney(sender, receiverEmail, amount, description.trim());
-            redirectAttributes.addFlashAttribute("successMessage", "Transfer successful!");
+            Integer senderId = SecurityHelper.getConnectedUser().getId();
+            accountService.transferMoney(senderId, receiverEmail, amount, description.trim());
+            model.addAttribute("successMessage", "Transfer successful!");
         } catch (RuntimeException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            model.addAttribute("errorMessage", e.getMessage());
         }
 
         return "redirect:/account";
