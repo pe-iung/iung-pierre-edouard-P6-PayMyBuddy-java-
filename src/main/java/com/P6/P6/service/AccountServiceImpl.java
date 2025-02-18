@@ -107,13 +107,13 @@ public class AccountServiceImpl implements AccountService{
 
 
         // Save the accounts
-        accountRepository.saveAll(List.of(senderAccount, receiverAccount));
+        accountRepository.saveAll(List.of(senderAccount, receiverAccount, feeReceiverAccount));
 
         // Create and save transaction record
         Transaction transaction = new Transaction(senderId, receiverId, amount, description);
         transactionRepository.save(transaction);
 
-        String feeDescription = "last transaction fee is " + transactionFeeRate + "%";
+        String feeDescription = "last transaction fee is " + transactionFeeRate*100 + "%";
 
         Transaction feeTransaction  = new Transaction(senderId, feeReceiverId, transactionFeeRate*amount, feeDescription);
         transactionRepository.save(feeTransaction);

@@ -1,19 +1,15 @@
 package com.P6.P6.controller;
 
-import ch.qos.logback.core.util.StringUtil;
 import com.P6.P6.DTO.FriendListResponse;
 import com.P6.P6.model.Transaction;
 import com.P6.P6.model.UserEntity;
-import com.P6.P6.repositories.UserEntityRepository;
 import com.P6.P6.service.AccountService;
 import com.P6.P6.service.SecurityHelper;
 import com.P6.P6.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -36,7 +32,7 @@ public class AccountController {
             model.addAttribute("friendList", friendList);
             model.addAttribute("balance", balance);
             model.addAttribute("transactions", transactions);
-            return "account";
+            return "home";
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Error fetching account details");
             return "error";
@@ -85,17 +81,5 @@ public class AccountController {
         return "redirect:/account";
     }
 
-//    @GetMapping("/transactions")
-//    public String getTransactionHistory(Model model) {
-//        try {
-//            UserEntity user = SecurityHelper.getConnectedUser();
-//            model.addAttribute("transactions",
-//                    accountService.getUserTransactions(user));
-//            return "transactions";
-//        } catch (Exception e) {
-//            model.addAttribute("errorMessage",
-//                    "Error fetching transaction history");
-//            return "error";
-//        }
-//    }
+
 }
