@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="template_layout_navbar">
+<head>
+    <title>Editer mon profil</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+</head>
+<body>
+<div layout:fragment="content1">
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow" style="width: 25rem;">
+
+        <div th:if="${errorMessage}" class="alert-danger">
+            <span th:text="${errorMessage}" />
+        </div>
+        <div th:if="${errorMessages}" class="alert-danger">
+            <ul>
+                <li th:each="msg : ${errorMessages}"><span th:text="msg"></span> </li>
+            </ul>
+        </div>
+        <div class="title-container">
+            <div class="app-title">Pay My Buddy</div>
+        </div>
+        <form th:action="@{/user-edit-profil}" method="post" class="mt-4">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" placeholder="username" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Mail</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Mail" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Mot de passe" required>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-primary">Modifier mon profil</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>
