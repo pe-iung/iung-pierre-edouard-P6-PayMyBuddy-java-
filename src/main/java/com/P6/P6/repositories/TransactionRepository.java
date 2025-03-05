@@ -9,6 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
-    List<Transaction> findAllBySenderIdOrReceiverId(Integer senderId, Integer receiverId);
+    //List<Transaction> findAllBySenderIdOrReceiverId(Integer senderId, Integer receiverId);
+    List<Transaction> findAllBySenderIdOrReceiverId(Integer sender_id, Integer receiver_id);
+
 
 }

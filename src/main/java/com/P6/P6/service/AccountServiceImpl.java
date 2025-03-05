@@ -29,11 +29,11 @@ public class AccountServiceImpl implements AccountService{
     @Value("${transaction.fee.rate}")
     private Double transactionFeeRate;
 
-    @Value("${transaction.fee.user.email}")
-    private String feeReceiverUserEmail;
+//    @Value("${transaction.fee.user.email}")
+//    private String feeReceiverUserEmail;
 
-    @Value("${transaction.fee.user.id}")
-    private int feeReceiverUserId;
+//    @Value("${transaction.fee.user.id}")
+//    private int feeReceiverUserId;
 
     @Override
     @Transactional
@@ -69,11 +69,11 @@ public class AccountServiceImpl implements AccountService{
 
         UserEntity receiver = userService.findByEmail(receiverEmail)
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
-        Integer receiverId = receiver.getId();
+//        Integer receiverId = receiver.getId();
 
-        UserEntity feeReceiver = userService.findByEmail(feeReceiverUserEmail)
-                .orElseThrow(() -> new RuntimeException("FeeReceiver not found"));
-        Integer feeReceiverId = feeReceiver.getId();
+//        UserEntity feeReceiver = userService.findByEmail(feeReceiverUserEmail)
+//                .orElseThrow(() -> new RuntimeException("FeeReceiver not found"));
+//        Integer feeReceiverId = feeReceiver.getId();
 
         if(senderId.equals(receiver.getId())){
             throw new IllegalArgumentException("Cannot transfer money to yourself");
@@ -91,32 +91,36 @@ public class AccountServiceImpl implements AccountService{
             throw new RuntimeException("Insufficient funds");
         }
 
+
+
+        double fee = transactionFeeRate*amount;
+
         Account receiverAccount = accountRepository.findByUser_Id(receiver.getId())
                 .orElseThrow(() -> new RuntimeException("Receiver account not found"));
 
         // Update balances
-        senderAccount.setBalance(senderAccount.getBalance() - (1+transactionFeeRate)*amount);
-        receiverAccount.setBalance(receiverAccount.getBalance() + amount);
+        senderAccount.setBalance(senderAccount.getBalance() - amount);
+        receiverAccount.setBalance(receiverAccount.getBalance() +  (amount - (transactionFeeRate*amount) ));
 
         // fee management, we remove the fee from sender user,
         // and send it to the receiver defined in admin application properties
-        Account feeReceiverAccount = accountRepository.findByUser_Id(feeReceiverUserId)
-                .orElseThrow(() -> new RuntimeException("Fee Receiver account not found"));
+//        Account feeReceiverAccount = accountRepository.findByUser_Id(feeReceiverUserId)
+//                .orElseThrow(() -> new RuntimeException("Fee Receiver account not found"));
 
-        feeReceiverAccount.setBalance(feeReceiverAccount.getBalance() + transactionFeeRate*amount);
+//        feeReceiverAccount.setBalance(feeReceiverAccount.getBalance() + transactionFeeRate*amount);
 
 
         // Save the accounts
-        accountRepository.saveAll(List.of(senderAccount, receiverAccount, feeReceiverAccount));
+        accountRepository.saveAll(List.of(senderAccount, receiverAccount));
 
         // Create and save transaction record
-        Transaction transaction = new Transaction(senderId, receiverId, amount, description);
+        Transaction transaction = new Transaction(sender, receiver, fee, amount, description);
         transactionRepository.save(transaction);
 
-        String feeDescription = "last transaction fee is " + transactionFeeRate*100 + "%";
-
-        Transaction feeTransaction  = new Transaction(senderId, feeReceiverId, transactionFeeRate*amount, feeDescription);
-        transactionRepository.save(feeTransaction);
+//        String feeDescription = "last transaction fee is " + transactionFeeRate*100 + "%";
+//
+//        Transaction feeTransaction  = new Transaction(sender, feeReceiver, transactionFeeRate*amount, feeDescription);
+//        transactionRepository.save(feeTransaction);
     }
 
     private static boolean assertUsersAreFriends(UserEntity sender, UserEntity receiver) {
@@ -145,6 +149,7 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public List<Transaction> getAllTransactionForUser(Integer senderId, Integer receiverId) {
+        log.info("getAlltransaction for user senderId= {}, receiverId= {}", senderId, receiverId);
         return transactionRepository.findAllBySenderIdOrReceiverId(senderId,receiverId);
     }
 }

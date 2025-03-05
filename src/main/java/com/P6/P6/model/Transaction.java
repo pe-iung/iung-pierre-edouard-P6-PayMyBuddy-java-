@@ -16,23 +16,35 @@ public class Transaction {
     private Integer id;
 
     @JoinColumn
-    private Integer senderId;
+    @ManyToOne
+    private UserEntity sender;
 
     @JoinColumn
-    private Integer receiverId;
+    @ManyToOne
+    private UserEntity receiver;
 
     @Column
     private String description;
 
     @Column
-    private Double amount;
+    private Double amount; //initialAmount
+
+    @Column
+    private Double fee;
 
 
-    public Transaction(Integer senderId, Integer receiverId, double amount, String description) {
+    public Transaction(UserEntity sender, UserEntity receiver,double fee, double amount, String description) {
 
-        this.senderId = senderId;
-        this.receiverId = receiverId;
+        this.sender = sender;
+        this.receiver = receiver;
+        this.fee = fee;
         this.amount = amount;
         this.description = description;
     }
+
+
+    public double amountAfterFee(){
+        return amount - fee;
+    }
+
 }

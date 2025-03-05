@@ -44,14 +44,6 @@ public class SignUpController {
     ) {
 
         log.debug("Validation errors: {}", bindingResult.getAllErrors());
-//
-//        bindingResult.hasErrors()
-//        // Check for empty fields manually if needed
-//        if (signupRequest.getUsername() == null || signupRequest.getUsername().trim().isEmpty() ||
-//                signupRequest.getPassword() == null || signupRequest.getPassword().trim().isEmpty() ||
-//                signupRequest.getEmail() == null || signupRequest.getEmail().trim().isEmpty()) {
-//            bindingResult.rejectValue("username", "field.required", "All fields are required");
-//        }
 
         if (errors.hasErrors()) {
             List<String> errorMessages = errors.getAllErrors().stream().map(ObjectError::toString).toList();
