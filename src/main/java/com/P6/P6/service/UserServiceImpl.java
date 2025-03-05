@@ -1,8 +1,6 @@
 package com.P6.P6.service;
 
-import com.P6.P6.DTO.FriendDTO;
-import com.P6.P6.DTO.FriendListResponse;
-import com.P6.P6.DTO.SignupRequest;
+import com.P6.P6.DTO.*;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
@@ -73,18 +71,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public FriendListResponse getFriendList(UserEntity currentUser) {
+    public List<UserEntity> getFriendList(UserEntity currentUser) {
         log.info("Generating friend list for user: {}", currentUser.getUsername());
 
-        UserEntity userWithFriends = userRepository.findWithFriendsById(currentUser.getId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        List<FriendDTO> friendDTOs = userWithFriends.getFriends().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-
-        log.info("Friend list generated with {} friends", friendDTOs.size());
-        return new FriendListResponse(friendDTOs, friendDTOs.size());
+        return userRepository.findWithFriendsById(currentUser.getId())
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getFriends();
     }
 
     private FriendDTO convertToDTO(UserEntity friend) {
@@ -94,6 +86,15 @@ public class UserServiceImpl implements UserService {
         dto.setEmail(friend.getEmail());
         return dto;
     }
+//
+//    @Override
+//    public UserProfilDisplay convertToUserDisplay(Integer userId) {
+//        UserEntity user = findById(userId)
+//                .orElseThrow(() -> new IllegalArgumentException("User not found with Id: " + userId));
+//
+//
+//        return new UserProfilDisplay(user.getUsername(), user.getEmail());
+//    }
 
     @Override
     public Optional<UserEntity> findByEmail(String email){
@@ -103,5 +104,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserEntity> findById(Integer userId){
         return userRepository.findById(userId);
+    }
+
+    @Override
+    public Integer editUser(Integer currentUserId, UserEditProfilRequest userEditProfilRequest) {
+        UserEntity user = findById(currentUserId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with Id: " + currentUserId));
+
+        String encodedPassword = passwordEncoder.encode(userEditProfilRequest.getPassword());
+        user.setUsername(userEditProfilRequest.getUsername());
+        user.setEmail(userEditProfilRequest.getEmail());
+        user.setPassword(encodedPassword);
+
+        userRepository.save(user);
+
+        return user.getId();
+
     }
 }

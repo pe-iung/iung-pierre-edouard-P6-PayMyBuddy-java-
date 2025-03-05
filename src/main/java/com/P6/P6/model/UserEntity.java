@@ -59,4 +59,9 @@ public class UserEntity implements UserDetails {
     public String getUsername() {
         return username;
     }
+
+    @Override
+    public String toString() {
+        return email;
+    }
 }

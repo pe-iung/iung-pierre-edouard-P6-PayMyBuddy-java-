@@ -1,5 +1,6 @@
 package com.P6.P6.controller;
 
+import com.P6.P6.DTO.FriendDTO;
 import com.P6.P6.DTO.FriendListResponse;
 import com.P6.P6.service.SecurityHelper;
 import com.P6.P6.service.UserService;
@@ -19,8 +20,9 @@ public class FriendController {
     @GetMapping("/friends")
     public String getFriendList(Model model) {
         try {
-            FriendListResponse friendList =
-                    userService.getFriendList(SecurityHelper.getConnectedUser());
+            FriendListResponse friendList = new FriendListResponse(
+                    SecurityHelper.getConnectedUser()
+                    );
             model.addAttribute("friendList", friendList);
             log.info("a friendList has been generated controller side from friendService {}",friendList);
             return "friends";
