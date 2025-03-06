@@ -26,7 +26,7 @@ public class AccountServiceImpl implements AccountService{
     private static final double INITIAL_BALANCE = 0.0;
 
     @Value("${transaction.fee.rate}")
-    private Double transactionFeeRate;
+    private int transactionFeeRate;
 
 //    @Value("${transaction.fee.user.email}")
 //    private String feeReceiverUserEmail;
@@ -92,7 +92,8 @@ public class AccountServiceImpl implements AccountService{
 
 
 
-        int feeAmountInCents = (int) (transactionFeeRate*amountInCents);
+        int feeAmountInCents = (transactionFeeRate*amountInCents/100);
+        log.info("calculated fee amount is {}",feeAmountInCents );
         //int amountInCents = (int) amount*100;
 
         Account receiverAccount = accountRepository.findByUser_Id(receiver.getId())

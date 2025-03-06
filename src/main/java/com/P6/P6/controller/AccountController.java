@@ -77,8 +77,8 @@ public class AccountController {
                     transaction.getSender().getId(),
                     Objects.equals(transaction.getReceiver().getId(), connectedUserId) ? transaction.getSender().getUsername() : transaction.getReceiver().getUsername(),
                     transaction.getDescription(),
-                    Objects.equals(transaction.getReceiver().getId(), connectedUserId) ? (transaction.getAmountInCents()-transaction.getFeeAmountInCents()) : -1 * transaction.getAmountInCents());
-            log.info("receiver transaction amount is {}, sender amount is {}", (transaction.getAmountInCents()-transaction.getFeeAmountInCents()),-1 * transaction.getAmountInCents() );
+                    Objects.equals(transaction.getReceiver().getId(), connectedUserId) ? (double) (transaction.getAmountInCents()-transaction.getFeeAmountInCents())/100 : (double) -1 * transaction.getAmountInCents()/100);
+            log.info("receiver transaction amount is {}, sender amount is {}", (double) (transaction.getAmountInCents()-transaction.getFeeAmountInCents())/100,(double) -1 * transaction.getAmountInCents()/100 );
 
         }
 
@@ -95,8 +95,9 @@ public class AccountController {
     ) {
         try {
             Integer senderId = SecurityHelper.getConnectedUser().getId();
-            int amountInCents = (int) amount*100;
-            accountService.transferMoney(senderId, receiverEmail, amountInCents, description.trim());
+            double amountInCents = amount*100;
+            accountService.transferMoney(senderId, receiverEmail, (int) amountInCents, description.trim());
+            log.info("transfering money from senderId= {} to receiverEmail {} with amounnt in cents {}, and descripiotn = {} ", senderId, receiverEmail, amountInCents, description.trim());
             model.addAttribute("successMessage", "Transfer successful!");
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
