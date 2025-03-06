@@ -25,11 +25,11 @@
         <form th:action="@{/user-edit-profil}" method="post" class="mt-4">
             <div class="mb-3">
                 <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username" name="username" placeholder="username" required>
+                <input type="text" class="form-control" id="username" name="username" th:value="*{userProfilDisplay.username()}" placeholder="username" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Mail</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Mail" required>
+                <input type="email" class="form-control" id="email" name="email" th:value="*{userProfilDisplay.email()}" placeholder="Mail" required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Mot de passe</label>
