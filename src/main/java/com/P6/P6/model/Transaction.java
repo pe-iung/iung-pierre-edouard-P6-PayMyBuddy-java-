@@ -27,24 +27,24 @@ public class Transaction {
     private String description;
 
     @Column
-    private Double amount; //initialAmount
+    private int amountInCents; //initialAmount
 
     @Column
-    private Double fee;
+    private int feeAmountInCents;
 
 
-    public Transaction(UserEntity sender, UserEntity receiver,double fee, double amount, String description) {
+    public Transaction(UserEntity sender, UserEntity receiver, int fee, int amountInCents, String description) {
 
         this.sender = sender;
         this.receiver = receiver;
-        this.fee = fee;
-        this.amount = amount;
+        this.feeAmountInCents = fee;
+        this.amountInCents = amountInCents;
         this.description = description;
     }
 
 
     public double amountAfterFee(){
-        return amount - fee;
+        return amountInCents - feeAmountInCents;
     }
 
 }

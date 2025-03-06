@@ -9,8 +9,8 @@ INSERT INTO public.account_table (balance, user_id, id) VALUES (1000, 1, '94325e
 INSERT INTO public.account_table (balance, user_id, id) VALUES (500, 2, '8ee5404a-359d-4f11-8dcf-04d1ffd1cdb1');
 */
 
-INSERT INTO public.account_table (balance, user_id) VALUES (1000,  (select id from user_table where username = 'dbuser'));
-INSERT INTO public.account_table (balance, user_id) VALUES (500, (select id from user_table where username = 'dbadmin'));
+INSERT INTO public.account_table (balance, user_id) VALUES (100000,  (select id from user_table where username = 'dbuser'));
+INSERT INTO public.account_table (balance, user_id) VALUES (50000, (select id from user_table where username = 'dbadmin'));
 
 /* Set Next ID Value to MAX ID
  without this, we face a primary_key id collision when a new account is added from jpa

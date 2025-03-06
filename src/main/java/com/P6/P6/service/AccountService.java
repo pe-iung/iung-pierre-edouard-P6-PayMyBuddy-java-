@@ -14,7 +14,7 @@ public interface AccountService {
     double getBalance(UserEntity user);
 
     @Transactional
-    void transferMoney(Integer senderId, String receiver, double amount, String description);
+    void transferMoney(Integer senderId, String receiver, int amount, String description);
 
     @Transactional
     void deposit(UserEntity user, double amount);

@@ -35,7 +35,7 @@ public class AccountController {
     public String getAccountDetails(Model model) {
         try {
             UserEntity user = SecurityHelper.getConnectedUser();
-            double balance = accountService.getBalance(user);
+            double balance = accountService.getBalance(user)/100;
             log.info("current user balance {}", balance);
 
             //List<Transaction> transactions = accountService.getAllTransactionForUser(user.getId(), user.getId());
@@ -72,36 +72,13 @@ public class AccountController {
     ) {
         public TransactionResponse(Transaction transaction, Integer connectedUserId) {
 
-            // username = receiver username if transaction is sent
-            // username = sender username if transaction is received
-//            String transactionResponseUsername = "";
-//            double transactionResponseAmount = 0.0;
-//            if (Objects.equals(transaction.getReceiver().getId(), connectedUserId)) {
-//                transactionResponseUsername = transaction.getSender().getUsername();
-//
-//            } else {
-//                transactionResponseUsername = transaction.getReceiver().getUsername();
-//
-
-
-            // transactionResponseAmount = - transaction amount if transaction is sent
-            // transactionResponseAmount =
-            // ((1 - transactionFeeRate) * transaction.getAmount()) if transaction is received
-
-
-            // Objects.equals(transaction.getReceiver().getId(), connectedUserId) ? transaction.getSender().getUsername() : transaction.getReceiver().getUsername(),
-
-
             this(
                     transaction.getId(),
                     transaction.getSender().getId(),
                     Objects.equals(transaction.getReceiver().getId(), connectedUserId) ? transaction.getSender().getUsername() : transaction.getReceiver().getUsername(),
-                    //transaction.getReceiver().getUsername(),
                     transaction.getDescription(),
-                    //transaction.getAmount());
-
-                    Objects.equals(transaction.getReceiver().getId(), connectedUserId) ? (transaction.getAmount()-transaction.getFee()) : -1 * transaction.getAmount());
-            log.info("receiver transaction amount is {}, sender amount is {}", (transaction.getAmount()-transaction.getFee()),-1 * transaction.getAmount() );
+                    Objects.equals(transaction.getReceiver().getId(), connectedUserId) ? (transaction.getAmountInCents()-transaction.getFeeAmountInCents()) : -1 * transaction.getAmountInCents());
+            log.info("receiver transaction amount is {}, sender amount is {}", (transaction.getAmountInCents()-transaction.getFeeAmountInCents()),-1 * transaction.getAmountInCents() );
 
         }
 
@@ -118,7 +95,8 @@ public class AccountController {
     ) {
         try {
             Integer senderId = SecurityHelper.getConnectedUser().getId();
-            accountService.transferMoney(senderId, receiverEmail, amount, description.trim());
+            int amountInCents = (int) amount*100;
+            accountService.transferMoney(senderId, receiverEmail, amountInCents, description.trim());
             model.addAttribute("successMessage", "Transfer successful!");
         } catch (RuntimeException e) {
             model.addAttribute("errorMessage", e.getMessage());
@@ -132,8 +110,9 @@ public class AccountController {
             @RequestParam double amount,
             Model model
     ) {
-        // Validate amount
-        if (amount <= 0) {
+        int amountInCents = (int) amount*100;
+
+        if (amountInCents <= 0) {
             model.addAttribute("errorMessage",
                     "Deposit amount must be positive");
             return "redirect:/account";
@@ -142,7 +121,7 @@ public class AccountController {
 
 
             UserEntity user = SecurityHelper.getConnectedUser();
-            accountService.deposit(user, amount);
+            accountService.deposit(user, amountInCents);
             model.addAttribute("successMessage",
                     "Deposit successful!");
         } catch (Exception e) {

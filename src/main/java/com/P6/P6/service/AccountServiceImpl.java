@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -54,13 +53,13 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     @Transactional
-    public void transferMoney(Integer senderId, String receiverEmail, double amount, String description) {
+    public void transferMoney(Integer senderId, String receiverEmail, int amountInCents, String description) {
 
         if (!StringUtils.hasText(description)) {
             throw new IllegalArgumentException("Description cannot be empty");
         }
 
-        if (amount <= 0) {
+        if (amountInCents <= 0) {
             throw new IllegalArgumentException("Transfer amount must be positive");
         }
 
@@ -87,20 +86,21 @@ public class AccountServiceImpl implements AccountService{
         Account senderAccount = accountRepository.findByUser_Id(sender.getId())
                 .orElseThrow(() -> new RuntimeException("Sender account not found"));
 
-        if (senderAccount.getBalance() < amount) {
+        if (senderAccount.getBalance() < amountInCents) {
             throw new RuntimeException("Insufficient funds");
         }
 
 
 
-        double fee = transactionFeeRate*amount;
+        int feeAmountInCents = (int) (transactionFeeRate*amountInCents);
+        //int amountInCents = (int) amount*100;
 
         Account receiverAccount = accountRepository.findByUser_Id(receiver.getId())
                 .orElseThrow(() -> new RuntimeException("Receiver account not found"));
 
         // Update balances
-        senderAccount.setBalance(senderAccount.getBalance() - amount);
-        receiverAccount.setBalance(receiverAccount.getBalance() +  (amount - (transactionFeeRate*amount) ));
+        senderAccount.setBalance(senderAccount.getBalance() - amountInCents);
+        receiverAccount.setBalance(receiverAccount.getBalance() +  (amountInCents - feeAmountInCents ));
 
         // fee management, we remove the fee from sender user,
         // and send it to the receiver defined in admin application properties
@@ -114,7 +114,7 @@ public class AccountServiceImpl implements AccountService{
         accountRepository.saveAll(List.of(senderAccount, receiverAccount));
 
         // Create and save transaction record
-        Transaction transaction = new Transaction(sender, receiver, fee, amount, description);
+        Transaction transaction = new Transaction(sender, receiver, feeAmountInCents, amountInCents, description);
         transactionRepository.save(transaction);
 
 //        String feeDescription = "last transaction fee is " + transactionFeeRate*100 + "%";
@@ -149,7 +149,7 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public List<Transaction> getAllTransactionForUser(Integer senderId, Integer receiverId) {
-        log.info("getAlltransaction for user senderId= {}, receiverId= {}", senderId, receiverId);
+        log.info("get All transaction for user senderId= {}, receiverId= {}", senderId, receiverId);
         return transactionRepository.findAllBySenderIdOrReceiverId(senderId,receiverId);
     }
 }
