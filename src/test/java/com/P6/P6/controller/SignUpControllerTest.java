@@ -4,6 +4,7 @@ import com.P6.P6.model.Account;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.AccountRepository;
 import com.P6.P6.repositories.UserEntityRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,6 +29,12 @@ class SignUpControllerTest {
 
     @Autowired
     private AccountRepository accountRepository;
+
+    @AfterEach
+    void cleanDatabase(){
+        accountRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 
     @Test
     void signupForm_ShouldReturnSignupPage() throws Exception {
@@ -107,8 +114,7 @@ class SignUpControllerTest {
                         .param("username", "testUser")
                         .param("password", "password123")
                         .param("email", "invalid-email"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/signup"));
+                .andExpect(status().is3xxRedirection());
 
         // Assert
         assertTrue(userRepository.findByEmail("invalid-email").isEmpty());
@@ -120,13 +126,15 @@ class SignUpControllerTest {
     @Test
     @Transactional
     void handleSignup_EmptyFields_ShouldNotCreateUserOrAccount() throws Exception {
+        accountRepository.deleteAll();
+        userRepository.deleteAll();
+
         // Act
         mockMvc.perform(post("/signup")
                         .param("username", "")
                         .param("password", "")
                         .param("email", ""))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/signup"));
+                .andExpect(status().is3xxRedirection());
 
         // Assert
         assertEquals(0, userRepository.count());

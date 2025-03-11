@@ -13,6 +13,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +24,9 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {
+
+    @Autowired
+    UserService userService;
 
     @Mock
     private AccountRepository accountRepository;
@@ -35,6 +39,8 @@ class AccountServiceImplTest {
 
     @Captor
     private ArgumentCaptor<Account> accountCaptor;
+
+
 
     @Captor
     private ArgumentCaptor<Transaction> transactionCaptor;
@@ -71,6 +77,7 @@ class AccountServiceImplTest {
         friendAccount.setBalance(500.0);
     }
 
+
     @Test
     void createAccount_Success() {
         // Arrange
@@ -100,26 +107,28 @@ class AccountServiceImplTest {
         verify(accountRepository).findByUser_Id(testUser.getId());
     }
 
-//    @Test
-//    void getBalance_AccountNotFound() {
-//        // Arrange
-//        when(accountRepository.findByUser(testUser)).thenReturn(Optional.empty());
-//
-//        // Act & Assert
-//        assertThrows(RuntimeException.class, () -> accountServiceImpl.getBalance(testUser));
-//        verify(accountRepository).findByUser(testUser);
-//    }
-//
+    @Test
+    void getBalance_AccountNotFound() {
+        // Arrange
+        when(accountRepository.findByUser_Id(testUser.getId())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> accountServiceImpl.getBalance(testUser));
+        verify(accountRepository).findByUser_Id(testUser.getId());
+    }
+
 //    @Test
 //    void transferMoney_Success() {
+//
+//
 //        // Arrange
-//        when(accountRepository.findByUser(testUser)).thenReturn(Optional.of(testAccount));
-//        when(accountRepository.findByUser(friendUser)).thenReturn(Optional.of(friendAccount));
+//        when(accountRepository.findByUser_Id(1)).thenReturn(Optional.of(testAccount));
+//        when(accountRepository.findByUser_Id(friendUser.getId())).thenReturn(Optional.of(friendAccount));
 //        when(accountRepository.save(any(Account.class))).thenAnswer(i -> i.getArgument(0));
 //        when(transactionRepository.save(any(Transaction.class))).thenAnswer(i -> i.getArgument(0));
 //
 //        // Act
-//        accountServiceImpl.transferMoney(testUser, friendUser, 500.0, "Test transfer");
+//        accountServiceImpl.transferMoney(1, "friend@example.com", 500, "Test transfer");
 //
 //        // Assert
 //

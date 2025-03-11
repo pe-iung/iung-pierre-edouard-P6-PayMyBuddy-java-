@@ -41,7 +41,6 @@ class AddFriendControllerTest {
     private Account friendAccount;
 
     @BeforeEach
-    @Transactional
     void setUp() {
         try {
             // Clean up existing test data
@@ -91,9 +90,9 @@ class AddFriendControllerTest {
         }
     }
     @Test
-    @WithMockUser
     void showAddFriendForm_ShouldReturnAddFriendPage() throws Exception {
-        mockMvc.perform(get("/add-friend"))
+        mockMvc.perform(get("/add-friend")
+                .with(user(testUser)))
                 .andExpect(status().isOk())
                 .andExpect(view().name("add-friend"));
     }
