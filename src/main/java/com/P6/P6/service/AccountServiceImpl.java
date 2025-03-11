@@ -68,11 +68,7 @@ public class AccountServiceImpl implements AccountService{
 
         UserEntity receiver = userService.findByEmail(receiverEmail)
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
-//        Integer receiverId = receiver.getId();
 
-//        UserEntity feeReceiver = userService.findByEmail(feeReceiverUserEmail)
-//                .orElseThrow(() -> new RuntimeException("FeeReceiver not found"));
-//        Integer feeReceiverId = feeReceiver.getId();
 
         if(senderId.equals(receiver.getId())){
             throw new IllegalArgumentException("Cannot transfer money to yourself");

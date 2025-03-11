@@ -99,7 +99,7 @@ public class AccountController {
             accountService.transferMoney(senderId, receiverEmail, (int) amountInCents, description.trim());
             log.info("transfering money from senderId= {} to receiverEmail {} with amounnt in cents {}, and descripiotn = {} ", senderId, receiverEmail, amountInCents, description.trim());
             model.addAttribute("successMessage", "Transfer successful!");
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             model.addAttribute("errorMessage", e.getMessage());
         }
 
