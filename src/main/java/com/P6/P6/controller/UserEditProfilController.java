@@ -35,8 +35,8 @@ public class UserEditProfilController {
             model.addAttribute("userEditProfilRequest", new UserEditProfilRequest());
         }
 
-        final UserEntity connectedUser = SecurityHelper.getConnectedUser();
-        final UserProfilDisplay userProfilDisplay = new UserProfilDisplay(connectedUser);
+        UserEntity connectedUser = SecurityHelper.getConnectedUser();
+        UserProfilDisplay userProfilDisplay = new UserProfilDisplay(connectedUser);
         model.addAttribute("userProfilDisplay", userProfilDisplay);
         return "user-edit-profil";
     }
