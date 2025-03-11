@@ -26,6 +26,11 @@ public class UserServiceImpl implements UserService {
 
     private static final double INITIAL_BALANCE = 0.0;
 
+    /**
+     * sign-up/add a new user
+     * @param signupRequest
+     * @return userId
+     */
     @Override
     @Transactional
     public Integer signupNewUser(SignupRequest signupRequest) {
@@ -66,6 +71,11 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     * allow a user to add a new friend via his friend email
+     * @param userEntityEmail, friendEmail
+     * @return void
+     */
     @Override
     public void addFriendToUserEntity(String userEntityEmail, String friendEmail) {
         UserEntity user = findByEmail(userEntityEmail)
@@ -89,6 +99,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
+
+    /**
+     * list all friends attached to a user
+     * @param currentUser
+     * @return List of User (friends)
+     */
     @Override
     @Transactional(readOnly = true)
     public List<UserEntity> getFriendList(UserEntity currentUser) {
@@ -110,6 +126,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(userId);
     }
 
+    /**
+     * allow a user to edit his own username, email, password
+     * @param currentUserId, userEditProfilRequest
+     * @return userId
+     */
     @Override
     public Integer editUser(Integer currentUserId, UserEditProfilRequest userEditProfilRequest) {
         UserEntity user = findById(currentUserId)

@@ -28,12 +28,12 @@ public class AccountServiceImpl implements AccountService{
     @Value("${transaction.fee.rate}")
     private int transactionFeeRate;
 
-//    @Value("${transaction.fee.user.email}")
-//    private String feeReceiverUserEmail;
-
-//    @Value("${transaction.fee.user.id}")
-//    private int feeReceiverUserId;
-
+    /**
+     * Bank account creation for a user
+     * with can parametrize the initial balance
+     * @param user
+     * @return the saved entity in the account repository
+     */
     @Override
     @Transactional
     public Account createAccount(UserEntity user) {
@@ -44,6 +44,12 @@ public class AccountServiceImpl implements AccountService{
         return accountRepository.save(account);
     }
 
+    /**
+     * Bank account balance for a user
+     * we store balance in cents in database but display it in euro on front-end
+     * @param user
+     * @return the balance in cents of euro (100cents = 1 euro)
+     */
     @Override
     public double getBalance(UserEntity user) {
         return accountRepository.findByUser_Id(user.getId())
@@ -51,6 +57,13 @@ public class AccountServiceImpl implements AccountService{
                 .orElseThrow(() -> new RuntimeException("Account not found for user: " + user.getUsername()));
     }
 
+    /**
+     * transfer money from one user to a friend previsouly added
+     * we store balance in cents in database but display it in euro on front-end
+     * we currently don't keep the fees in a company bank account, but this could be a future feature
+     * @param senderId, receiverEmail, amountInCents, description
+     * @return void
+     */
     @Override
     @Transactional
     public void transferMoney(Integer senderId, String receiverEmail, int amountInCents, String description) {
@@ -99,13 +112,6 @@ public class AccountServiceImpl implements AccountService{
         senderAccount.setBalance(senderAccount.getBalance() - amountInCents);
         receiverAccount.setBalance(receiverAccount.getBalance() +  (amountInCents - feeAmountInCents ));
 
-        // fee management, we remove the fee from sender user,
-        // and send it to the receiver defined in admin application properties
-//        Account feeReceiverAccount = accountRepository.findByUser_Id(feeReceiverUserId)
-//                .orElseThrow(() -> new RuntimeException("Fee Receiver account not found"));
-
-//        feeReceiverAccount.setBalance(feeReceiverAccount.getBalance() + transactionFeeRate*amount);
-
 
         // Save the accounts
         accountRepository.saveAll(List.of(senderAccount, receiverAccount));
@@ -114,18 +120,26 @@ public class AccountServiceImpl implements AccountService{
         Transaction transaction = new Transaction(sender, receiver, feeAmountInCents, amountInCents, description);
         transactionRepository.save(transaction);
 
-//        String feeDescription = "last transaction fee is " + transactionFeeRate*100 + "%";
-//
-//        Transaction feeTransaction  = new Transaction(sender, feeReceiver, transactionFeeRate*amount, feeDescription);
-//        transactionRepository.save(feeTransaction);
+
     }
 
+    /**
+     * assertUsersAreFriends
+     * we check the receiver is a friend of the sender
+     * @param sender, receiver
+     * @return true if receiver is friend with sender
+     */
     private static boolean assertUsersAreFriends(UserEntity sender, UserEntity receiver) {
         return sender.getFriends().stream()
                 .map(UserEntity::getId)
                 .anyMatch(id -> receiver.getId().equals(id));
     }
 
+    /**
+     * allow a user to deposit money on his bank account
+     * @param user, amount
+     * @return void
+     */
     @Override
     @Transactional
     public void deposit(UserEntity user, double amount) {
@@ -139,11 +153,21 @@ public class AccountServiceImpl implements AccountService{
         accountRepository.save(account);
     }
 
+    /**
+     * allow a user to see his own bank account
+     * @param user
+     * @return account
+     */
     private Account getAccount(UserEntity user) {
         return accountRepository.findByUser_Id(user.getId())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
     }
 
+    /**
+     * list all the transaction for a given user, either sent ones, or received ones
+     * @param senderId, receiverId
+     * @return list of transactions for a given user (both sent & received)
+     */
     @Override
     public List<Transaction> getAllTransactionForUser(Integer senderId, Integer receiverId) {
         log.info("get All transaction for user senderId= {}, receiverId= {}", senderId, receiverId);

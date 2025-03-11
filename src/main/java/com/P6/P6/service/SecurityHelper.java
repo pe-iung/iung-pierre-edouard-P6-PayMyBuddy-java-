@@ -6,6 +6,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public final class SecurityHelper {
 
+    /**
+     * get the user currently connected
+     * @return user currently signed-in
+     */
     public static UserEntity getConnectedUser()
     {
         if(SecurityContextHolder.getContext() == null
