@@ -3,6 +3,7 @@ package com.P6.P6.service;
 import com.P6.P6.DTO.*;
 import com.P6.P6.model.UserEntity;
 import com.P6.P6.repositories.UserEntityRepository;
+import com.P6.P6.utils.EmailValidation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.apache.logging.log4j.ThreadContext.isEmpty;
 
 @RequiredArgsConstructor
 @Service
@@ -30,6 +33,23 @@ public class UserServiceImpl implements UserService {
         if (findByEmail(signupRequest.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
+
+        if ((signupRequest.getPassword()).isEmpty()) {
+            throw new RuntimeException("password is empty");
+        }
+
+        if ((signupRequest.getEmail()).isEmpty()) {
+            throw new RuntimeException("Email is empty");
+        }
+
+        if ((signupRequest.getUsername()).isEmpty()) {
+            throw new RuntimeException("Username is empty");
+        }
+        String regexEmailPattern = "^(.+)@(\\S+)$";
+        if (!EmailValidation.patternMatches(signupRequest.getEmail(), regexEmailPattern)){
+            throw new RuntimeException("invalid Email");
+        }
+
 
         // Create and save new user
         String encodedPassword = passwordEncoder.encode(signupRequest.getPassword());
@@ -79,22 +99,6 @@ public class UserServiceImpl implements UserService {
                 .getFriends();
     }
 
-    private FriendDTO convertToDTO(UserEntity friend) {
-        FriendDTO dto = new FriendDTO();
-        dto.setId(friend.getId());
-        dto.setUsername(friend.getUsername());
-        dto.setEmail(friend.getEmail());
-        return dto;
-    }
-//
-//    @Override
-//    public UserProfilDisplay convertToUserDisplay(Integer userId) {
-//        UserEntity user = findById(userId)
-//                .orElseThrow(() -> new IllegalArgumentException("User not found with Id: " + userId));
-//
-//
-//        return new UserProfilDisplay(user.getUsername(), user.getEmail());
-//    }
 
     @Override
     public Optional<UserEntity> findByEmail(String email){
