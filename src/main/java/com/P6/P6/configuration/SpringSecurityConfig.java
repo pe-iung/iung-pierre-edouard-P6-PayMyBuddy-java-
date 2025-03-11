@@ -42,19 +42,6 @@ public class SpringSecurityConfig {
                 .build();
     }
 
-//    @Bean
-//    public UserDetailsService users() {
-//        UserDetails user = UserEntity.builder()
-//                .username("user")
-//                .password(passwordEncoder().encode("user"))
-//                .roles("USER").build();
-//        UserDetails admin = UserEntity.builder()
-//                .username("admin")
-//                .password(passwordEncoder().encode("admin"))
-//                .roles("USER", "ADMIN").build();
-//        return new InMemoryUserDetailsManager(user, admin);
-//    }
-
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -39,8 +39,7 @@ public class SignUpController {
             @Valid @ModelAttribute("signupRequest") SignupRequest signupRequest,
             BindingResult bindingResult,
             Errors errors,
-            Model model,
-            RedirectAttributes redirectAttributes
+            Model model
     ) {
 
         log.debug("Validation errors: {}", bindingResult.getAllErrors());
