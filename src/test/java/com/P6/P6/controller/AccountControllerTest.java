@@ -134,7 +134,8 @@ class AccountControllerTest {
                         .param("amount", "100.0")
                         .param("description", "Test transfer"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/account"));
+                .andExpect(redirectedUrl("/account"))
+                .andExpect(flash().attributeExists("successMessage"));
 
         // Verify balances were updated
         Integer senderUserId = sender.getId();

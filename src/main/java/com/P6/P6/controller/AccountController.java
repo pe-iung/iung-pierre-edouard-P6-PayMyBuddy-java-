@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,8 +38,6 @@ public class AccountController {
             UserEntity user = SecurityHelper.getConnectedUser();
             double balance = accountService.getBalance(user)/100;
             log.info("current user balance {}", balance);
-
-            //List<Transaction> transactions = accountService.getAllTransactionForUser(user.getId(), user.getId());
 
             List<TransactionResponse> transactions = accountService.getAllTransactionForUser(user.getId(), user.getId())
                     .stream()
@@ -91,16 +90,16 @@ public class AccountController {
             @RequestParam String receiverEmail,
             @RequestParam double amount,
             @RequestParam String description,
-            Model model
+            RedirectAttributes redirectAttributes
     ) {
         try {
             Integer senderId = SecurityHelper.getConnectedUser().getId();
             double amountInCents = amount*100;
             accountService.transferMoney(senderId, receiverEmail, (int) amountInCents, description.trim());
             log.info("transfering money from senderId= {} to receiverEmail {} with amounnt in cents {}, and descripiotn = {} ", senderId, receiverEmail, amountInCents, description.trim());
-            model.addAttribute("successMessage", "Transfer successful!");
+            redirectAttributes.addFlashAttribute("successMessage", "Transfer successful!");
         } catch (Exception e) {
-            model.addAttribute("errorMessage", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
         return "redirect:/account";
