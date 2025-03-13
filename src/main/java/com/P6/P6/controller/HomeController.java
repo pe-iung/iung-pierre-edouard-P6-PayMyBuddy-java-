@@ -1,5 +1,6 @@
 package com.P6.P6.controller;
 
+import com.P6.P6.service.SecurityHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -7,11 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HomeController {
 
-    @GetMapping("/home")
+    @GetMapping("/")
     public String home() {
-        //return "home";
-        return "redirect:/account";
+        if(SecurityHelper.isConnected()) {
+            return "redirect:/account";
+        }
+        return "redirect:/login";
    }
-
 
 }
