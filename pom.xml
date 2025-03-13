@@ -122,6 +122,11 @@
 			<artifactId>maven-surefire-plugin</artifactId>
 			<version>3.5.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.schemaspy</groupId>
+			<artifactId>schemaspy</artifactId>
+			<version>6.2.2</version>
+		</dependency>
 
 
 	</dependencies>
