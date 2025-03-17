@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+    <script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-sm">
+    <div class="container-fluid">
+        <p class="navbar-text">Pay My Buddy</p>
+        <ul class="navbar-nav">
+
+            <li class="nav-item">
+                <a class="nav-link me-auto" th:href="@{/account}"
+                   th:classappend="${servletPath.contains('account') ? 'active' : ''}">Transférer</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link me-auto" th:href="@{/user-edit-profil}"
+                   th:classappend="${servletPath.contains('user-edit-profil') ? 'active' : ''}">Profil</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link"
+                   th:href="@{/add-friend}"
+                   th:classappend="${servletPath.contains('add-friend') ? 'active' : ''}">
+                    Ajouter relation
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link me-auto" href="/logout">Se déconnecter</a>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+<section layout:fragment="content1">
+
+</section>
+</body>
+</html>

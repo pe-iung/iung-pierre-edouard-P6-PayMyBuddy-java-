@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.3/css/bootstrap.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+<main>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-4 shadow" style="width: 25rem;">
+        <div class="title-container">
+            <div class="app-title">Pay My Buddy</div>
+        </div>
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mot de passe</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
+            <div th:if="${param.error}" class="alert alert-danger" role="alert">
+                Email ou mot de passe invalide
+            </div>
+            <div th:if="${param.logout}" class="alert alert-success" role="alert">
+                Vous avez été déconnecté avec succès
+            </div>
+            <h1><button type="submit" class="btn btn-primary w-100 mb-4">Se connecter</button></h1>
+        </form>
+        <div class="text-center">
+            <h1> <a href="/signup" class="btn btn-success w-100">S'inscrire</a>  </h1>
+        </div>
+    </div>
+</div>
+    </main>
+</body>
+</html>

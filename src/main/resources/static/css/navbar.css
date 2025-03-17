@@ -1,0 +1,8 @@
+.nav-link:hover {
+    color: blue !important;
+}
+
+.active {
+    font-weight: bold !important;
+    color: blue !important;
+}
