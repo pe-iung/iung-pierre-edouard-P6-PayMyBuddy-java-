@@ -16,10 +16,6 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //@GeneratedValue(strategy = GenerationType.UUID)
-    //private UUID id;
-
-
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)

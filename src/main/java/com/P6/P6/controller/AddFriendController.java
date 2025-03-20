@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,17 +25,18 @@ public class AddFriendController {
     @PostMapping("/add-friend")
     public String addFriend(
             String friendEmail,
-            Model model
+            RedirectAttributes redirectAttributes
     ) {
 
         try {
         final UserEntity connectedUser = SecurityHelper.getConnectedUser();
         userService.addFriendToUserEntity(connectedUser.getEmail(),friendEmail);
+        redirectAttributes.addFlashAttribute("successMessage", "Ami ajouté avec succès!");
 
         }catch (Exception e){
-            model.addAttribute("errorMessage" , e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
-        return "add-friend";
+        return "redirect:add-friend";
     }
 }

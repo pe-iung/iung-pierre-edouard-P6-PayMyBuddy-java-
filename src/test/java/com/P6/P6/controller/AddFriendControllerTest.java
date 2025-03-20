@@ -103,9 +103,9 @@ class AddFriendControllerTest {
         mockMvc.perform(post("/add-friend")
                         .with(user(testUser))
                         .param("friendEmail", "friend@example.com"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("add-friend"))
-                .andExpect(model().attributeDoesNotExist("errorMessage"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:add-friend"))
+                .andExpect(flash().attribute("successMessage", "Ami ajouté avec succès!"));
     }
 
     @Test
@@ -114,9 +114,9 @@ class AddFriendControllerTest {
         mockMvc.perform(post("/add-friend")
                         .with(user(friendUser2))
                         .param("friendEmail", "test@example.com"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("add-friend"))
-                .andExpect(model().attribute("errorMessage", "Friend is already added!"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:add-friend"))
+                .andExpect(flash().attribute("errorMessage", "Friend is already added!"));
     }
     
 
@@ -126,8 +126,8 @@ class AddFriendControllerTest {
         mockMvc.perform(post("/add-friend")
                         .with(user(friendUser2))
                         .param("friendEmail", "test@examgukjygukjple.com"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("add-friend"))
-                .andExpect(model().attribute("errorMessage", "Friend not found with email: test@examgukjygukjple.com"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:add-friend"))
+                .andExpect(flash().attribute("errorMessage", "Friend not found with email: test@examgukjygukjple.com"));
     }
 }

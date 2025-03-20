@@ -73,7 +73,7 @@ public class AccountServiceImpl implements AccountService{
         }
 
         if (amountInCents <= 0) {
-            throw new IllegalArgumentException("Transfer amount must be positive");
+            throw new IllegalArgumentException("le montant transféré doit être positif");
         }
 
         UserEntity sender = userService.findById(senderId)
@@ -96,7 +96,7 @@ public class AccountServiceImpl implements AccountService{
                 .orElseThrow(() -> new RuntimeException("Sender account not found"));
 
         if (senderAccount.getBalance() < amountInCents) {
-            throw new RuntimeException("Insufficient funds");
+            throw new RuntimeException("Fonds insuffisant");
         }
 
 

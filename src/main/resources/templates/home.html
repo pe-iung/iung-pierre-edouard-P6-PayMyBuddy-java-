@@ -14,7 +14,7 @@
                 <!-- Account Balance Card -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <h1 class="card-title text-center">Current Balance</h1>
+                        <h1 class="card-title text-center">Mon Solde</h1>
                         <h2 class="text-center text-primary">
                             <span th:text="${#numbers.formatDecimal(balance, 1, 2)}">0.00</span> €
                         </h2>
@@ -34,19 +34,19 @@
                 <!-- Transfer Money Card -->
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h3 class="card-title mb-0">Make a Transfer</h3>
+                        <h3 class="card-title mb-0">Faire un transfert</h3>
                     </div>
                     <div class="card-body">
                         <form th:action="@{/account/transfer}" method="post">
 
                             <div th:if="${friendList.isEmpty()}" class="text-center py-5">
                                 <i class="bi bi-people" style="font-size: 3rem;"></i>
-                                <p class="mt-3">You haven't added any friends yet.</p>
-                                <a href="/add-friend" class="btn btn-primary">Add Your First Friend</a>
+                                <p class="mt-3">Vous n'avez pas encore ajouté d'amis</p>
+                                <a href="/add-friend" class="btn btn-primary">Ajouter mon premier ami</a>
                             </div>
 
                             <div th:if="!${friendList.isEmpty()}" class="mb-3">
-                                <label for="receiverEmail">Choose a friend:</label>
+                                <label for="receiverEmail">Sélectionner une relation:</label>
                                 <div>
                                     <select class=""
                                             id="receiverEmail"
@@ -59,7 +59,7 @@
                             </div>
                             <div th:if="!${friendList.isEmpty()}" class="mb-3
                                   ">
-                                <label for="amount" class="form-label">Amount (€)</label>
+                                <label for="amount" class="form-label">Montant (€)</label>
                                 <input type="number"
                                        class="form-control"
                                        id="amount"
@@ -75,11 +75,11 @@
                                        class="form-control"
                                        id="description"
                                        name="description"
-                                       placeholder="Enter transfer description"
+                                       placeholder="description"
                                        required>
                             </div>
                             <div th:if="!${friendList.isEmpty()}" class="d-grid">
-                                <button type="submit" class="btn btn-primary">Transfer Money</button>
+                                <button type="submit" class="btn btn-primary">Payer</button>
                             </div>
                         </form>
                     </div>
@@ -88,12 +88,12 @@
                 <!-- Deposit Money Card -->
                 <div class="card">
                     <div class="card-header">
-                        <h3 class="card-title mb-0">Deposit Money</h3>
+                        <h3 class="card-title mb-0">Dépot</h3>
                     </div>
                     <div class="card-body">
                         <form th:action="@{/account/deposit}" method="post">
                             <div class="mb-3">
-                                <label for="depositAmount" class="form-label">Amount (€)</label>
+                                <label for="depositAmount" class="form-label">Montant (€)</label>
                                 <input type="number"
                                        class="form-control"
                                        id="depositAmount"
@@ -104,7 +104,7 @@
                                        required>
                             </div>
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-success">Deposit</button>
+                                <button type="submit" class="btn btn-success">Dépot</button>
                             </div>
                         </form>
                     </div>
@@ -113,7 +113,7 @@
                 <!-- Optional: Recent Transactions -->
                 <div class="card mt-4" th:if="${transactions != null and not #lists.isEmpty(transactions)}">
                     <div class="card-header">
-                        <h3 class="card-title mb-0">Recent Transactions</h3>
+                        <h3 class="card-title mb-0">Transactions</h3>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -121,18 +121,18 @@
                                 <thead>
                                 <tr>
                                     <th>Type</th>
-                                    <th>Friend</th>
-                                    <th>Amount</th>
+                                    <th>Amis</th>
+                                    <th>Montant</th>
                                     <th>Description</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 <tr th:each="transaction : ${transactions}">
-                                    <td th:text="${transaction.senderId == #authentication.principal.id ? 'Sent' : 'Received'}">
+                                    <td th:text="${transaction.senderId == #authentication.principal.id ? 'Envoyé' : 'Reçu'}">
                                         Type
                                     </td>
                                     <td th:text="${transaction.receiverUsername}">
-                                        Receiver
+                                        nom
                                     </td>
                                     <td th:text="${#numbers.formatDecimal(transaction.amount, 1, 2) + ' €'}">0.00 €</td>
                                     <td th:text="${transaction.description}">Description</td>

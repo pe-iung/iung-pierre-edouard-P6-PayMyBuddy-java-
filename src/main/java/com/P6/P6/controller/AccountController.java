@@ -97,7 +97,7 @@ public class AccountController {
             double amountInCents = amount*100;
             accountService.transferMoney(senderId, receiverEmail, (int) amountInCents, description.trim());
             log.info("transfering money from senderId= {} to receiverEmail {} with amounnt in cents {}, and descripiotn = {} ", senderId, receiverEmail, amountInCents, description.trim());
-            redirectAttributes.addFlashAttribute("successMessage", "Transfer successful!");
+            redirectAttributes.addFlashAttribute("successMessage", "Transfer réussi!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
